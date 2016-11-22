@@ -76,7 +76,7 @@ def loadcsv(fin,variants):
         if qual_idx != -1:
             QUAL = row[qual_idx]
         else:
-            QUAL = "NA"
+            QUAL = "30"
         if ID_idx != -1:
             ID = row[ID_idx]
         else:
@@ -84,7 +84,7 @@ def loadcsv(fin,variants):
         if filter_idx != -1:
             FILTER = row[filter_idx]
         else:
-            FILTER = "NA"
+            FILTER = "PASS"
         if info_idx != -1:
             INFO = row[info_idx]
         else:
