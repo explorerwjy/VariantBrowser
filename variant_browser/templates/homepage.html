@@ -1,0 +1,34 @@
+{% extends "layout.html" %}
+{% block body %}
+    <script>
+        $('#navbar_form_container').hide();
+    </script>
+    <div class="container">
+        <h1 id="home-title">Variants Browser (Alpha)</h1>
+        <div class="row">
+            <div class="col-md-12">
+                <div id="home-searchbox">
+                    <form action="/awesome">
+                        <input type="submit" style="display: none;"/>
+                        <input id="home-searchbox-input" name="query" class="form-control input-lg awesomebar" type="text" placeholder="Search for a gene or variant or region"/>
+                        <input type="submit" style="position: absolute; left: -9999px"/>
+                    </form>
+                    <p class="text-muted">
+                        Examples - Gene: <a href="/awesome?query=PCSK9">PCSK9</a>,
+                        Variant: <a href="/variant/22-46615880-T-C">22-46615880-T-C</a>,
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="row" style="font-size: 16px;">
+            <div class="col-md-8">
+                <h3 align="center"> <a href="/about" style="color: black;">About</a></h3>
+                <div>
+                    <p>
+                        The data set provided on this website spans ??? trios or quartet in which a proband with CHD/CDH/Autism/PAH or other Developmental Diseases.</a>.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
