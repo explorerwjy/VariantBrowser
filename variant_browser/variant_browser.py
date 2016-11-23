@@ -33,7 +33,7 @@ app.config.update(dict(
     DEBUG=True,
     SECRET_KEY='development key',
     LOAD_DB_PARALLEL_PROCESSES = 4,  # contigs assigned to threads, so good to make this a factor of 24 (eg. 2,3,4,6,8)
-    SITES_VCFS=glob.glob(os.path.join(os.path.dirname(__file__), DATA_FILES_DIRECTORY, 'Variants.vcf.txt')),
+    SITES_VCFS=glob.glob(os.path.join(os.path.dirname(__file__), DATA_FILES_DIRECTORY, 'Variants.vcf')),
     GENCODE_GTF=os.path.join(os.path.dirname(__file__), DATA_FILES_DIRECTORY, 'Homo_sapiens.GRCh38.86.gtf.gz'),
     CANONICAL_TRANSCRIPT_FILE=os.path.join(os.path.dirname(__file__), DATA_FILES_DIRECTORY, 'canonical_transcripts.txt.gz'),
     OMIM_FILE=os.path.join(os.path.dirname(__file__), DATA_FILES_DIRECTORY, 'omim_info.txt.gz'),
@@ -121,6 +121,7 @@ def load_gene_models():
     # grab genes from GTF
     print "Loading Genes"
     start_time = time.time()
+    count = 0
     with gzip.open(app.config['GENCODE_GTF']) as gtf_file:
         for gene in get_genes_from_gencode_gtf(gtf_file):
             gene_id = gene['gene_id']
@@ -132,8 +133,9 @@ def load_gene_models():
             if gene_id in dbnsfp_info:
                 gene['full_gene_name'] = dbnsfp_info[gene_id][0]
                 gene['other_names'] = dbnsfp_info[gene_id][1]
+            count += 1
             db.genes.insert(gene, w=0)
-
+    print "%d genes loaded" % count
     print 'Done loading genes. Took %s seconds' % int(time.time() - start_time)
 
     start_time = time.time()
@@ -150,7 +152,9 @@ def load_gene_models():
     print "Loading transcripts"
     start_time = time.time()
     with gzip.open(app.config['GENCODE_GTF']) as gtf_file:
+
         db.transcripts.insert((transcript for transcript in get_transcripts_from_gencode_gtf(gtf_file)), w=0)
+
     print 'Done loading transcripts. Took %s seconds' % int(time.time() - start_time)
 
     start_time = time.time()
@@ -211,7 +215,7 @@ def homepage():
 
 @app.route('/autocomplete/<query>')
 def awesome_autocomplete(query):
-    print query
+    print "\n\nNew Query %s"%query
     if not hasattr(g, 'autocomplete_strings'):
         g.autocomplete_strings = [s.strip() for s in open(os.path.join(os.path.dirname(__file__), 'autocomplete_strings.txt'))]
     suggestions = lookups.get_awesomebar_suggestions(g, query)
@@ -226,6 +230,7 @@ def awesome():
 
     print "Searched for %s: %s" % (datatype, identifier)
     if datatype == 'gene':
+        print "\nGO TO GNEN\n"
         return redirect('/gene/{}'.format(identifier))
     elif datatype == 'variant':
         return redirect('/variant/{}'.format(identifier))
@@ -269,7 +274,9 @@ def gene_page(gene_id):
 def get_gene_page_content(gene_id):
     db = get_db()
     try:
+        print "gene_id",gene_id
         gene = lookups.get_gene(db, gene_id)
+        print "gene",gene
         if gene is None:
             abort(404)
         gene_name = gene['gene_name']
@@ -281,11 +288,11 @@ def get_gene_page_content(gene_id):
         variants_in_transcript = lookups.get_variants_in_transcript(db, transcript_id)
         add_transcript_coordinate_to_variants(db, variants_in_transcript, transcript_id)
 
-        print gene
-        print variants_in_gene
-        print transcript
-        print transcripts_in_gene
-        print "variants_in_transcript\n",variants_in_transcript
+        #print gene
+        #print variants_in_gene
+        #print transcript
+        #print transcripts_in_gene
+        #print "variants_in_transcript\n",variants_in_transcript
 
         t = render_template(
             'gene.html',

@@ -286,7 +286,7 @@ def get_variants_in_gene(db, gene_id):
         #add_consequence_to_variant(variant)
         #remove_extraneous_information(variant)
         variants.append(variant)
-        print variant 
+        #print variant 
     return variants
 
 
