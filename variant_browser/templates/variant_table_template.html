@@ -6,13 +6,14 @@
 </style>
 
 
-
+<script type="text/template" id="variant-table-template">
     {% for item in table_variants %}
         <li>{{ item.variant_id }}</li>
     {% endfor %}
 
 
 <table class="tg">
+<thead>
   <tr>
     <th class="tg-yw4l">variant_id</th>
     <th class="tg-yw4l">filter</th>
@@ -37,8 +38,8 @@
     <td class="tg-yw4l">.</td>
     <td class="tg-yw4l">DDD</td>
   </tr>
-
-
+</thead>
+<tbody>
 <% _.each(table_variants, function(variant) { %>
     <tr>
         <td class="tg-yw4l"> <%= variant.variant_id %></td>
@@ -53,4 +54,11 @@
         <td class="tg-yw4l"> <%= variant.Disease %></td>
     </tr>
     <% }); %>
+</tbody>
 </table>
+<ul id="navigation">
+    {% for item in table_variants %}
+        <li>{{ item.variant_id }}</li>
+    {% endfor %}
+</ul>
+</script>
